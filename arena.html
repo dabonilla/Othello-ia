@@ -273,7 +273,6 @@
         }
         return flag
       }
-
       // Computes the winner in terms of number of pieces in the board
       winner(board, white, black) {
         var size = board.length
@@ -302,7 +301,6 @@
         Konekti.client['canvas'].setText(commands)
       }
     }
-
     /*
     * Player's Code (Must inherit from Agent)
     * This is an example of a rangom player agent
@@ -312,28 +310,7 @@
         super()
         this.board = new Board()
       }
-
-
-
-      compute(board, time) {
-        var moves = this.board.valid_moves(board, this.color)
-        var index = Math.floor(moves.length * Math.random())
-        console.log("index")
-        for (var i = 0; i < index; i++) {
-
-
-        } // Making it very slow to test time restriction
-        return moves[index]
-      }
-    }
-
-    class sinMenteComoElAgente extends Agent {
-      constructor() {
-        super()
-        this.board = new Board()
-      }
       puntuation(board) {
-
       }
       semiCorner(board,i,j){
         const len = board.length
@@ -355,15 +332,42 @@
         }
         return false
       }
+      
+      corner(board,moves){
 
+        const len = board.length
+        
+        for (var i = 0;i<moves.length, i++;){
+          //left up corner
+          if ((moves[i][0] == 0 && moves[i][1] == 0)){
+            return moves[i]
+          }
+        //right up corner
+          if ((moves[i][0] == 0 && moves[i][1] == len-1)){
+            return moves[i]
+          }
+          //left down corner
+          if ((moves[i][0] == len-1 && moves[i][1] == 0)){
+            return moves[i]
+          }
+          //right down corner
+          if ((moves[i][0] == len-1 && moves[i][1]== len-1)){
+            return moves[i]
+          }
+        }
+        
+        return null
+      }
+
+      
       compute(board, time) {
-
         var moves = this.board.valid_moves(board, this.color)
-        console.log("board", board)
+        //console.log("board", board)
         var index = Math.floor(moves.length * Math.random())
-        console.log(index)
+        //console.log(index)
         let minVal=10000;
         let currentMove;
+
         for (var i = 0; i < moves.length; i++) {
           const clone = structuredClone(board);
           const flag = this.board.move(clone,moves[i][0],moves[i][1],this.color)
@@ -375,14 +379,14 @@
             c="W"
           }
           const moves2 = this.board.valid_moves(clone,c)
-          console.log("clone",clone)
-          console.log(moves2)
+          //console.log("clone",clone)
+          //console.log(moves2)
           let maxVal=0
           let countColor = 0 
           for (var j=0; j<moves2.length; j++){
             const clone2 = structuredClone(clone);
             const flag = this.board.move(clone2,moves2[j][0],moves2[j][1],c)
-            console.log("clone2:",clone2)
+            //console.log("clone2:",clone2)
             var size = clone2.length
             var W = 0
             var B = 0
@@ -396,31 +400,150 @@
             else{
               countColor = B
             }
-
             if (countColor>maxVal){
               maxVal=countColor;
             }
             //console.log(countColor)
           }
-
           if (maxVal<minVal && !this.semiCorner(board,moves[i][0],moves[i][1])) {
             minVal=maxVal;
             currentMove=moves[i]
           }
-          
-          
-
-         } 
-         if(minVal == 10000){
+        } 
+        if(minVal == 10000){
           currentMove = moves[0]
-         }
+        }
         return currentMove
     }
-
+  
     /*
     * Environment (Cannot be modified or any of its attributes accesed directly)
     */
   }
+    
+
+    class sinMenteComoElAgente extends Agent {
+      constructor() {
+        super()
+        this.board = new Board()
+      }
+      puntuation(board) {
+      }
+      semiCorner(board,i,j){
+        const len = board.length
+        //left up corner
+        if ((i == 0 && j == 1) ||(i == 1 && j == 0) || (i == 1 && j == 1) ){
+          return true
+        }
+        //right up corner
+        if ((i == 0 && j == len-2) ||(i == 1 && j == len-2) || (i == 1 && j == len-1) ){
+          return true
+        }
+        //left down corner
+        if ((i == len-2 && j == 1) ||(i == len-2 && j == 0) || (i == len-1 && j == 1) ){
+          return true
+        }
+        //right down corner
+        if ((i == len-2 && j == len-1) ||(i == len-2 && j == len-2) || (i == len-1 && j == len-2) ){
+          return true
+        }
+        return false
+      }
+      
+      corner(board,moves){
+
+        const len = board.length
+        
+        for (var i = 0;i<moves.length, i++;){
+          //left up corner
+          if ((moves[i][0] == 0 && moves[i][1] == 0)){
+            return moves[i]
+          }
+        //right up corner
+          if ((moves[i][0] == 0 && moves[i][1] == len-1)){
+            return moves[i]
+          }
+          //left down corner
+          if ((moves[i][0] == len-1 && moves[i][1] == 0)){
+            return moves[i]
+          }
+          //right down corner
+          if ((moves[i][0] == len-1 && moves[i][1]== len-1)){
+            return moves[i]
+          }
+        }
+        
+        return null
+      }
+
+      
+      compute(board, time) {
+        var moves = this.board.valid_moves(board, this.color)
+        //console.log("board", board)
+        var index = Math.floor(moves.length * Math.random())
+        //console.log(index)
+        let minVal=10000;
+        let currentMove;
+        let corner2 = this.corner(board,moves)
+        if( corner2 != null){
+          return corner2
+        }
+        for (var i = 0; i < moves.length; i++) {
+          const clone = structuredClone(board);
+          const flag = this.board.move(clone,moves[i][0],moves[i][1],this.color)
+          let c = ''
+          if(this.color == "W"){
+            c="B"
+          }
+          else{
+            c="W"
+          }
+          const moves2 = this.board.valid_moves(clone,c)
+          //console.log("clone",clone)
+          //console.log(moves2)
+          let maxVal=0
+          let countColor = 0 
+          for (var j=0; j<moves2.length; j++){
+            const clone2 = structuredClone(clone);
+            const flag = this.board.move(clone2,moves2[j][0],moves2[j][1],c)
+            //console.log("clone2:",clone2)
+            var size = clone2.length
+            var W = 0
+            var B = 0
+            for (var k = 0; k < size; k++)
+              for (var l = 0; l < size; l++)
+                if (clone2[k][l] == 'W') W++
+                else if (clone2 [k][l] == 'B') B++
+            if(c == "W"){
+              countColor = W
+            }
+            else{
+              countColor = B
+            }
+            if (countColor>maxVal){
+              maxVal=countColor;
+            }
+            //console.log(countColor)
+          }
+          if (maxVal<minVal && !this.semiCorner(board,moves[i][0],moves[i][1])) {
+            minVal=maxVal;
+            currentMove=moves[i]
+          }
+        } 
+        if(minVal == 10000){
+          currentMove = moves[0]
+        }
+        return currentMove
+    }
+  
+
+  }
+
+
+
+
+
+  
     class Environment extends MainClient {
       constructor() {
         super()
