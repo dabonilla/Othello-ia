@@ -367,7 +367,12 @@
         //console.log(index)
         let minVal=10000;
         let currentMove;
-
+        let minMoves = 10000;
+        
+        let corner2 = this.corner(board,moves)
+        if( corner2 != null){
+          return corner2
+        }
         for (var i = 0; i < moves.length; i++) {
           const clone = structuredClone(board);
           const flag = this.board.move(clone,moves[i][0],moves[i][1],this.color)
@@ -379,38 +384,12 @@
             c="W"
           }
           const moves2 = this.board.valid_moves(clone,c)
-          //console.log("clone",clone)
-          //console.log(moves2)
-          let maxVal=0
-          let countColor = 0 
-          for (var j=0; j<moves2.length; j++){
-            const clone2 = structuredClone(clone);
-            const flag = this.board.move(clone2,moves2[j][0],moves2[j][1],c)
-            //console.log("clone2:",clone2)
-            var size = clone2.length
-            var W = 0
-            var B = 0
-            for (var k = 0; k < size; k++)
-              for (var l = 0; l < size; l++)
-                if (clone2[k][l] == 'W') W++
-                else if (clone2 [k][l] == 'B') B++
-            if(c == "W"){
-              countColor = W
-            }
-            else{
-              countColor = B
-            }
-            if (countColor>maxVal){
-              maxVal=countColor;
-            }
-            //console.log(countColor)
-          }
-          if (maxVal<minVal && !this.semiCorner(board,moves[i][0],moves[i][1])) {
-            minVal=maxVal;
-            currentMove=moves[i]
+          if(moves2.length < minMoves && !this.semiCorner(board,moves[i][0],moves[i][1])){
+            minMoves = moves2.length
+            currentMove = moves[i]
           }
         } 
-        if(minVal == 10000){
+        if (minMoves == 10000){
           currentMove = moves[0]
         }
         return currentMove
@@ -503,6 +482,7 @@
           //console.log(moves2)
           let maxVal=0
           let countColor = 0 
+          
           for (var j=0; j<moves2.length; j++){
             const clone2 = structuredClone(clone);
             const flag = this.board.move(clone2,moves2[j][0],moves2[j][1],c)
