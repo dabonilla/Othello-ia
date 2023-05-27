@@ -135,7 +135,8 @@
         }
         return moves
       }
-
+      
+      
       // Determines if a piece of 'color' can be set
       can_play(board, color) {
         var size = board.length
@@ -334,6 +335,26 @@
       puntuation(board) {
 
       }
+      semiCorner(board,i,j){
+        const len = board.length
+        //left up corner
+        if ((i == 0 && j == 1) ||(i == 1 && j == 0) || (i == 1 && j == 1) ){
+          return true
+        }
+        //right up corner
+        if ((i == 0 && j == len-2) ||(i == 1 && j == len-2) || (i == 1 && j == len-1) ){
+          return true
+        }
+        //left down corner
+        if ((i == len-2 && j == 1) ||(i == len-2 && j == 0) || (i == len-1 && j == 1) ){
+          return true
+        }
+        //right down corner
+        if ((i == len-2 && j == len-1) ||(i == len-2 && j == len-2) || (i == len-1 && j == len-2) ){
+          return true
+        }
+        return false
+      }
 
       compute(board, time) {
 
@@ -382,13 +403,17 @@
             //console.log(countColor)
           }
 
-          if (maxVal<minVal){
+          if (maxVal<minVal && !this.semiCorner(board,moves[i][0],moves[i][1])) {
             minVal=maxVal;
             currentMove=moves[i]
           }
           
+          
 
-         } // Making it very slow to test time restriction
+         } 
+         if(minVal == 10000){
+          currentMove = moves[0]
+         }
         return currentMove
     }
 
